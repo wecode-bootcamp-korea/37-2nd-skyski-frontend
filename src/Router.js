@@ -9,6 +9,7 @@ import MyPage from './pages/MyPage/MyPage';
 import Order from './pages/Order/Order';
 import Select from './pages/Select/Select';
 import Filter from './pages/Filter/Filter';
+import RedirectKakao from './components/Login/RedirectKakao';
 
 const Router = () => {
   return (
@@ -22,6 +23,7 @@ const Router = () => {
         <Route path="/filter" element={<Filter />} />
         <Route path="/select" element={<Select />} />
         <Route path="/order" element={<Order />} />
+        <Route path="/oauth" element={<RedirectKakao />} />
       </Routes>
       <Footer />
     </BrowserRouter>
