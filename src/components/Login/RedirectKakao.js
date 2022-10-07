@@ -1,4 +1,5 @@
-import React, { useEffect, useNavigate } from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
