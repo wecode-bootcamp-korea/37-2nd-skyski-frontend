@@ -1,7 +1,7 @@
 import React from 'react';
 
-function Select() {
+function Hotel() {
   return <div>Select</div>;
 }
 
-export default Select;
+export default Hotel;

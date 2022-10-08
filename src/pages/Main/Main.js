@@ -14,8 +14,8 @@ const Main = () => {
   const [end, setEnd] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [seat, setSeat] = useState('');
-  const [radio, setRadio] = useState('');
+  const [seat, setSeat] = useState('일반석');
+  const [radio, setRadio] = useState('왕복');
 
   const saveStart = e => {
     setStart(e.target.value);
@@ -34,7 +34,7 @@ const Main = () => {
   };
 
   const move = () => {
-    navigate('/filter', {
+    navigate('/flight', {
       state: {
         start: start,
         end: end,
@@ -57,7 +57,13 @@ const Main = () => {
     <Container>
       <Title>이제 여행을 시작하세요.</Title>
       <Box>
-        <Radio type="radio" name="route" value="왕복" onChange={saveRadio} />
+        <Radio
+          type="radio"
+          name="route"
+          value="왕복"
+          onChange={saveRadio}
+          checked
+        />
         <RouteText>왕복</RouteText>
         <Radio type="radio" name="route" value="편도" onChange={saveRadio} />
         <RouteText>편도</RouteText>
@@ -101,7 +107,7 @@ const Main = () => {
           </InputBoxFour>
           <InputBoxFive>
             <Text>좌석 등급</Text>
-            <Selection onChange={saveSeat}>
+            <Selection onChange={saveSeat} value={seat}>
               <Option value="일반석">일반석</Option>
               <Option value="비지니스">비지니스석</Option>
               <Option value="일등석">일등석</Option>
