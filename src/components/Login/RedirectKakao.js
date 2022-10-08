@@ -10,7 +10,7 @@ const RedirectKakao = () => {
 
   useEffect(() => {
     fetch(
-      `http://10.58.52.85:3000/oauth?client_id=${process.env.REACT_APP_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&code=${validCode}`,
+      `http://43.200.182.156:3000/oauth?client_id=${process.env.REACT_APP_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&code=${validCode}`,
       {
         method: 'POST',
         headers: {
@@ -21,6 +21,7 @@ const RedirectKakao = () => {
       .then(response => response.json())
       .then(result => {
         if (result.message === 'login success') {
+          alert('로그인 완료');
           localStorage.setItem('token', result.accesstoken);
           navigate('/');
         }

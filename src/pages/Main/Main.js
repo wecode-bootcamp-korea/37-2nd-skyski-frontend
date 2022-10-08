@@ -243,8 +243,8 @@ const InputBoxOne = styled.div`
 `;
 
 const StartPlace = styled.input`
-  width: 80%;
-  height: 47px;
+  width: 74.6%;
+  height: 43px;
   padding-left: 10px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -258,7 +258,7 @@ const InputBoxTwo = styled.div`
 
 const EndPlace = styled.input`
   width: 100%;
-  height: 47px;
+  height: 43px;
   padding-left: 10px;
   border: 1px solid lightgray;
 `;
@@ -301,7 +301,7 @@ const Search = styled.button`
 `;
 
 const Change = styled.button`
-  width: 20%;
+  width: 20.7%;
   height: 47px;
   background-color: white;
   border: 1px solid black;

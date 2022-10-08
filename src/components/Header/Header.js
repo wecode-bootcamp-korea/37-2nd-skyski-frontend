@@ -14,6 +14,7 @@ const Header = () => {
   };
   const logout = () => {
     localStorage.removeItem('token');
+    alert('로그아웃 되었습니다');
     navigate('/');
   };
 
@@ -46,7 +47,7 @@ const Header = () => {
 const Container = styled.div`
   ${({ theme }) => theme.variables.flex('', 'space-between')}
   padding: 0 200px;
-  width: 100%;
+  /* width: 100%; */
   height: 78px;
   background-color: ${({ theme }) => theme.style.white};
 

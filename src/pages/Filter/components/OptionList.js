@@ -1,50 +1,28 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled, { StyleSheetManager } from 'styled-components';
 import OptionEco from './OptionEco';
 import Option from './Option';
 import { useState } from 'react';
-import { fi } from 'date-fns/locale';
 
-function OptionList(props) {
+function OptionList() {
   const [isEco, SetIsEco] = useState(true);
-  const [filtered, setFiltered] = useState('2');
+  const [filtered, setFiltered] = useState('1');
   const isFiltered = e => {
     setFiltered(e.target.id);
   };
-  const filteredByOp = e => {
-    setFiltered(e.target.value);
-  };
-
-  useEffect(() => {
-    if (filtered === '1') props.setSorter('minPrice');
-    if (filtered === '2') props.setSorter('minPrice');
-    if (filtered === '3') props.setSorter('minDuration');
-  }, [filtered]);
-
-  // const move = () => {
-  //   navigate('/flight', {
-  //     state: {
-
-  //     }
-  //   });
-  // };
-
   return (
     <OuterBox>
       <FirstBox>
-        <ResultNumber>{props.products.length}개의 결과</ResultNumber>
+        <ResultNumber>599개의 결과</ResultNumber>
         <SortingModalBox>
           <div>정렬 기준</div>
-          <select id="sorter" onChange={filteredByOp}>
-            <option value="1" selected={filtered === '1'}>
-              추천순
-            </option>
-            <option value="2" selected={filtered === '2'}>
-              최저가순
-            </option>
-            <option value="3" selected={filtered === '3'}>
-              최단여행시간순
-            </option>
+          <select id="sorter">
+            {/* {filtered === 1 ? (
+              <option selected>추천순</option>
+            ) */}
+            <option>추천순</option>
+            <option>최저가순</option>
+            <option>최단여행시간순</option>
           </select>
         </SortingModalBox>
       </FirstBox>
@@ -54,10 +32,10 @@ function OptionList(props) {
             추천순
           </FilterName>
           <FilterLowPrice id="1" filtered={filtered}>
-            ₩{props.minPrice.price?.toLocaleString()}
+            ₩561,400
           </FilterLowPrice>
           <FilterShortest id="1" filtered={filtered}>
-            {props.minPrice?.duration}분
+            1시간 48분 (평균)
           </FilterShortest>
         </FilterNameBox1>
         <FilterNameBox2 id="2" onClick={isFiltered} filtered={filtered}>
@@ -65,10 +43,10 @@ function OptionList(props) {
             최저가
           </FilterName>
           <FilterLowPrice id="2" filtered={filtered}>
-            ₩{props.minPrice.price?.toLocaleString()}
+            ₩561,400
           </FilterLowPrice>
           <FilterShortest id="2" filtered={filtered}>
-            {props.minPrice?.duration}분
+            1시간 48분 (평균)
           </FilterShortest>
         </FilterNameBox2>
         <FilterNameBox3 id="3" onClick={isFiltered} filtered={filtered}>
@@ -76,25 +54,17 @@ function OptionList(props) {
             최단여행시간
           </FilterName>
           <FilterLowPrice id="3" filtered={filtered}>
-            ₩{props.minDuration.price?.toLocaleString()}
+            ₩561,400
           </FilterLowPrice>
           <FilterShortest id="3" filtered={filtered}>
-            {props.minDuration?.duration}분
+            1시간 48분 (평균)
           </FilterShortest>
         </FilterNameBox3>
       </SecondBox>
       <ThirdBox>
-        {props.products.map(el =>
-          el.totalEco === 'T' ? (
-            <OptionEco
-              product={el}
-              location={props.location}
-              id={el.flightId1}
-            />
-          ) : (
-            <Option product={el} location={props.location} id={el.flightId1} />
-          )
-        )}
+        {isEco ? <OptionEco /> : <Option />}
+        {isEco ? <OptionEco /> : <Option />}
+        {isEco ? <OptionEco /> : <Option />}
       </ThirdBox>
     </OuterBox>
   );

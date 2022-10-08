@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 
-function FilterTap(props) {
+function FilterTap() {
   const [opendArr, setOpendArr] = useState(['1', '2', '3', '4', '5']);
   const [selectedBtn, setSelectedBtn] = useState();
   const [firstBtnIndex, setFirstBtnIndex] = useState(0);
@@ -12,132 +12,28 @@ function FilterTap(props) {
   const [fifthBtnIndex, setFifthBtnIndex] = useState(48);
   const [dragStartPosition, setDragStartPosition] = useState(0);
   const [dragPosition, setDragPosition] = useState(0);
-  const [exceptAirline, setExceptAirline] = useState([]);
-  const roundTrip = (location => {
-    if (location?.radio === '왕복') return 'T';
-    if (location?.radio === '편도') return 'F';
-  })(props.location);
-  const departure = (location => {
-    if (location?.start === '김포') return 'GMP';
-    if (location?.start === '김해') return 'PUS';
-    if (location?.start === '제주') return 'CJU';
-  })(props.location);
 
-  const arrival = (location => {
-    if (location?.end === '김포') return '&arrival=GMP';
-    if (location?.end === '김해') return '&arrival=PUS';
-    if (location?.end === '제주') return '&arrival=CJU';
-  })(props.location);
-
-  const seatClass = (location => {
-    if (location?.seat === '일반석') return '이코노미';
-    if (location?.seat === '비지니스') return '비즈니스';
-    if (location?.seat === '일등석') return '퍼스트';
-  })(props.location);
-
-  const departDate = (location => {
-    const string = moment(location?.startDate).format('YYYY-MM-DD');
-    return string;
-  })(props.location);
-
-  const endDate = (location => {
-    if (location?.radio === '편도') return '';
-    const string = moment(location?.endDate).format('YYYY-MM-DD');
-    return `&arrivalDate=${string}`;
-  })(props.location);
+  const firstBtn = useRef();
 
   const setThisPosition = e => {
-    setSelectedBtn(e.target.id);
-
     setDragStartPosition(e.clientX);
-    window.addEventListener('mousemove', setMovingPosition);
-    window.addEventListener('mouseup', outThisButton);
+    firstBtn.current.addEventListener('mousemove', setMovingPosition);
   };
 
-  const setMovingPosition = useCallback(e => {
+  const setMovingPosition = e => {
     setDragPosition(e.clientX);
-  }, []);
-
-  const exceptAirlineFetch = (() => {
-    return `&exceptAirline=${exceptAirline.join('&exceptAirline=')}`;
-  })();
-
-  useEffect(() => {
-    fetch(
-      `http://43.200.182.156:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-      }
-    )
-      .then(res => res.json())
-      .then(json => props.setData(json));
-  }, [exceptAirline]);
+  };
+  console.log(dragPosition);
 
   const outThisButton = e => {
-    window.removeEventListener('mousemove', setMovingPosition);
-    window.removeEventListener('mouseup', outThisButton);
-
-    fetch(
-      `http://43.200.182.156:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-      }
-    )
-      .then(res => res.json())
-      .then(json => props.setData(json));
+    e.preventDefault();
+    console.log('good');
+    firstBtn.current.removeEventListener('mousemove', setMovingPosition);
   };
 
   useEffect(() => {
-    if (dragPosition - dragStartPosition >= 4.0) {
-      if (selectedBtn === '1' && firstBtnIndex < secondBtnIndex - 1) {
-        setFirstBtnIndex(current => current + 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '2' && secondBtnIndex < 48) {
-        setSecondBtnIndex(current => current + 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '3' && thirdBtnIndex < fourthBtnIndex - 1) {
-        setThirdBtnIndex(current => current + 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '4' && fourthBtnIndex < 48) {
-        setFourthBtnIndex(current => current + 1);
-        setDragStartPosition(dragPosition);
-      }
-
-      if (selectedBtn === '5' && fifthBtnIndex < 48) {
-        setFifthBtnIndex(current => current + 1);
-        setDragStartPosition(dragPosition);
-      }
-    }
-
-    if (dragPosition - dragStartPosition <= -4.0) {
-      if (selectedBtn === '1' && firstBtnIndex > 0) {
-        setFirstBtnIndex(current => current - 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '2' && secondBtnIndex > firstBtnIndex + 1) {
-        setSecondBtnIndex(current => current - 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '3' && thirdBtnIndex > 0) {
-        setThirdBtnIndex(current => current - 1);
-        setDragStartPosition(dragPosition);
-      }
-      if (selectedBtn === '4' && fourthBtnIndex > thirdBtnIndex + 1) {
-        setFourthBtnIndex(current => current - 1);
-        setDragStartPosition(dragPosition);
-      }
-
-      if (selectedBtn === '5' && fifthBtnIndex > 0) {
-        setFifthBtnIndex(current => current - 1);
-        setDragStartPosition(dragPosition);
-      }
+    if (dragPosition - dragStartPosition >= 4.5) {
+      setFirstBtnIndex(current => current + 1);
     }
   }, [dragPosition]);
 
@@ -145,7 +41,7 @@ function FilterTap(props) {
   const secondBtnMin = secondBtnIndex * 30;
   const thirdBtnMin = thirdBtnIndex * 30;
   const fourthBtnMin = fourthBtnIndex * 30;
-  const fifthBtnMin = fifthBtnIndex * 10;
+  const fifthBtnMin = fifthBtnIndex * 30;
 
   const firstPosition = firstBtnIndex * 4.5;
   const secondPosition = secondBtnIndex * 4.5;
@@ -154,9 +50,7 @@ function FilterTap(props) {
   const fifthPosition = fifthBtnIndex * 4.5;
 
   const firstBtnHour = (function () {
-    let english = moment(`${departDate} 00:00`)
-      .add(firstBtnMin, 'm')
-      .format('LT');
+    let english = moment('2022-10-07 00:00').add(firstBtnMin, 'm').format('LT');
     if (english.includes('AM')) {
       english = english.slice(0, 5);
       english = `오전 ${english}`;
@@ -167,16 +61,8 @@ function FilterTap(props) {
     return english;
   })();
 
-  const firstBtnHourFetch = (() => {
-    let english = moment(`${departDate} 00:00`).add(firstBtnMin, 'm').format();
-    let time =
-      english.slice(english.indexOf(':') - 2, english.indexOf(':')) +
-      english.slice(english.indexOf(':') + 1, english.indexOf(':') + 3);
-    return time;
-  })();
-
   const secondBtnHour = (function () {
-    let english = moment(`${departDate} 00:00`)
+    let english = moment('2022-10-07 00:00')
       .add(secondBtnMin, 'm')
       .format('LT');
     if (english.includes('AM')) {
@@ -189,16 +75,8 @@ function FilterTap(props) {
     return english;
   })();
 
-  const secondBtnHourFetch = (() => {
-    let english = moment(`${departDate} 00:00`).add(secondBtnMin, 'm').format();
-    let time =
-      english.slice(english.indexOf(':') - 2, english.indexOf(':')) +
-      english.slice(english.indexOf(':') + 1, english.indexOf(':') + 3);
-    return time;
-  })();
-
   const thirdBtnHour = (function () {
-    let english = moment(`${endDate} 00:00`).add(thirdBtnMin, 'm').format('LT');
+    let english = moment('2022-10-07 00:00').add(thirdBtnMin, 'm').format('LT');
     if (english.includes('AM')) {
       english = english.slice(0, 5);
       english = `오전 ${english}`;
@@ -209,16 +87,8 @@ function FilterTap(props) {
     return english;
   })();
 
-  const thirdBtnHourFetch = (() => {
-    let english = moment(`${endDate} 00:00`).add(thirdBtnMin, 'm').format();
-    let time =
-      english.slice(english.indexOf(':') - 2, english.indexOf(':')) +
-      english.slice(english.indexOf(':') + 1, english.indexOf(':') + 3);
-    return time;
-  })();
-
   const fourthBtnHour = (function () {
-    let english = moment(`${endDate} 00:00`)
+    let english = moment('2022-10-07 00:00')
       .add(fourthBtnMin, 'm')
       .format('LT');
     if (english.includes('AM')) {
@@ -231,14 +101,6 @@ function FilterTap(props) {
     return english;
   })();
 
-  const fourthBtnHourFetch = (() => {
-    let english = moment(`${endDate} 00:00`).add(fourthBtnMin, 'm').format();
-    let time =
-      english.slice(english.indexOf(':') - 2, english.indexOf(':')) +
-      english.slice(english.indexOf(':') + 1, english.indexOf(':') + 3);
-    return time;
-  })();
-
   const openMenu = e => {
     if (opendArr.includes(e.target.id)) {
       const arr = opendArr.filter(el => el !== e.target.id);
@@ -247,7 +109,12 @@ function FilterTap(props) {
       setOpendArr([...opendArr, e.target.id]);
     }
   };
-  const moveBtnByKey = e => {
+
+  const selectBtn = e => {
+    setSelectedBtn(e.target.id);
+  };
+
+  const moveBtn = e => {
     if (selectedBtn === '1') {
       if (e.code === 'ArrowRight' && firstBtnIndex < secondBtnIndex - 1) {
         setFirstBtnIndex(current => current + 1);
@@ -283,28 +150,6 @@ function FilterTap(props) {
         setFourthBtnIndex(current => current - 1);
       }
     }
-
-    if (selectedBtn === '5') {
-      if (e.code === 'ArrowRight' && fifthBtnIndex < 48) {
-        setFifthBtnIndex(current => current + 1);
-      }
-      if (e.code === 'ArrowLeft' && fifthBtnIndex > 0) {
-        setFifthBtnIndex(current => current - 1);
-      }
-    }
-  };
-
-  const pickThis = e => {
-    if (exceptAirline.includes(e.target.name)) {
-      let test = exceptAirline.filter(el => el !== e.target.name);
-      setExceptAirline(test);
-    } else {
-      setExceptAirline([...exceptAirline, e.target.name]);
-    }
-  };
-
-  const showEco = () => {
-    props.setEco(current => !current);
   };
 
   return (
@@ -318,7 +163,7 @@ function FilterTap(props) {
           <span id="1">출발 시간대 설정</span>
           <img id="1" src="/images/arrowDown.png" alt="arrow" />
         </FilterNameTap>
-        <DepartureFilterBox id="1" isOpened={opendArr} howMany={props.location}>
+        <DepartureFilterBox id="1" isOpened={opendArr}>
           <FilterText>
             <div>가는날 출발시간</div>
             <span>
@@ -330,12 +175,15 @@ function FilterTap(props) {
             <DragButton1
               name="button"
               id="1"
+              onClick={selectBtn}
               selectedBtn={selectedBtn}
-              onKeyDown={moveBtnByKey}
+              onKeyDown={moveBtn}
               tabIndex="-1"
               position={firstPosition}
               onMouseDown={setThisPosition}
               onMouseUp={outThisButton}
+              // onMouseMove={setMovingPosition}
+              ref={firstBtn}
             >
               <div name="button" id="1" />
             </DragButton1>
@@ -343,55 +191,48 @@ function FilterTap(props) {
             <DragButton2
               name="button"
               id="2"
+              onClick={selectBtn}
               selectedBtn={selectedBtn}
-              onKeyDown={moveBtnByKey}
+              onKeyDown={moveBtn}
               tabIndex="-1"
               position={secondPosition}
-              onMouseDown={setThisPosition}
-              onMouseUp={outThisButton}
             >
               <div name="button" id="2" />
             </DragButton2>
           </DragFilter>
 
-          {props.location.radio === '왕복' ? (
-            <>
-              <FilterText>
-                <div>오는날 출발시간</div>
-                <span>
-                  {thirdBtnHour} - {fourthBtnHour}
-                </span>
-              </FilterText>
+          <FilterText>
+            <div>오는날 출발시간</div>
+            <span>
+              {thirdBtnHour} - {fourthBtnHour}
+            </span>
+          </FilterText>
 
-              <DragFilter>
-                <DragButton3
-                  name="button"
-                  id="3"
-                  selectedBtn={selectedBtn}
-                  onKeyDown={moveBtnByKey}
-                  tabIndex="-1"
-                  position={thirdPosition}
-                  onMouseDown={setThisPosition}
-                  onMouseUp={outThisButton}
-                >
-                  <div id="3" name="button" />
-                </DragButton3>
-                <DragLine />
-                <DragButton4
-                  id="4"
-                  name="button"
-                  selectedBtn={selectedBtn}
-                  onKeyDown={moveBtnByKey}
-                  tabIndex="-1"
-                  position={fourthPosition}
-                  onMouseDown={setThisPosition}
-                  onMouseUp={outThisButton}
-                >
-                  <div id="4" name="button" />
-                </DragButton4>
-              </DragFilter>
-            </>
-          ) : null}
+          <DragFilter>
+            <DragButton3
+              name="button"
+              id="3"
+              onClick={selectBtn}
+              selectedBtn={selectedBtn}
+              onKeyDown={moveBtn}
+              tabIndex="-1"
+              position={thirdPosition}
+            >
+              <div id="3" name="button" />
+            </DragButton3>
+            <DragLine />
+            <DragButton4
+              id="4"
+              name="button"
+              onClick={selectBtn}
+              selectedBtn={selectedBtn}
+              onKeyDown={moveBtn}
+              tabIndex="-1"
+              position={fourthPosition}
+            >
+              <div id="4" name="button" />
+            </DragButton4>
+          </DragFilter>
         </DepartureFilterBox>
       </DepartTimeBox>
       <DurationTimeBox>
@@ -408,12 +249,10 @@ function FilterTap(props) {
             <DragButton5
               id="5"
               name="button"
+              onClick={selectBtn}
               selectedBtn={selectedBtn}
-              onKeyDown={moveBtnByKey}
-              tabIndex="-1"
+              tanIndex="-1"
               position={fifthPosition}
-              onMouseDown={setThisPosition}
-              onMouseUp={outThisButton}
             >
               <div id="5" name="button" />
             </DragButton5>
@@ -425,44 +264,16 @@ function FilterTap(props) {
           <span id="3">항공사</span>
           <img id="3" src="/images/arrowDown.png" alt="arrow" />
         </FilterNameTap>
-        <AirlineCheckBoxList
-          id="3"
-          isOpened={opendArr}
-          airLineLength={props.airLineList.length}
-        >
+        <AirlineCheckBoxList id="3" isOpened={opendArr}>
+          <CheckAllBox>
+            <input type="checkbox" />
+            <CheckAllBoxText>모두 선택</CheckAllBoxText>
+          </CheckAllBox>
+
           <CheckBox>
-            <input
-              type="checkbox"
-              checked={!exceptAirline.includes('KE')}
-              name="KE"
-              onClick={pickThis}
-            />
+            <input type="checkbox" />
             <CheckBoxText>
-              <div>KOREAN AIR</div>
-              <span>₩690,093부터</span>
-            </CheckBoxText>
-          </CheckBox>
-          <CheckBox>
-            <input
-              type="checkbox"
-              checked={!exceptAirline.includes('OZ')}
-              name="OZ"
-              onClick={pickThis}
-            />
-            <CheckBoxText>
-              <div>ASIANA AIRLINES</div>
-              <span>₩690,093부터</span>
-            </CheckBoxText>
-          </CheckBox>
-          <CheckBox>
-            <input
-              type="checkbox"
-              checked={!exceptAirline.includes('7C')}
-              name="7C"
-              onClick={pickThis}
-            />
-            <CheckBoxText>
-              <div>JEJUair</div>
+              <div>ANA (전일본공수)</div>
               <span>₩690,093부터</span>
             </CheckBoxText>
           </CheckBox>
@@ -473,35 +284,14 @@ function FilterTap(props) {
           <span id="4">공항</span>
           <img id="4" src="/images/arrowDown.png" alt="arrow" />
         </FilterNameTap>
-        <AirportCheckBoxList
-          id="4"
-          isOpened={opendArr}
-          airportLength={
-            props.arrivalAirports.length + props.departAirports.length
-          }
-        >
-          <AirportDeparture>
-            <WhichWay>출발지</WhichWay>
-            {props.departAirports.map((el, i) => (
-              <CheckBox key={i}>
-                <input type="checkbox" checked />
-                <CheckBoxText>
-                  <div>{el} 공항</div>
-                </CheckBoxText>
-              </CheckBox>
-            ))}
-          </AirportDeparture>
-          <AirportArrival>
-            <WhichWay>도착지</WhichWay>
-            {props.arrivalAirports.map((el, i) => (
-              <CheckBox key={i}>
-                <input type="checkbox" checked />
-                <CheckBoxText>
-                  <div>{el} 공항</div>
-                </CheckBoxText>
-              </CheckBox>
-            ))}
-          </AirportArrival>
+        <AirportCheckBoxList id="4" isOpened={opendArr}>
+          <CheckBox>
+            <input type="checkbox" />
+            <CheckBoxText>
+              <div>ANA (전일본공수)</div>
+              <span>₩690,093부터</span>
+            </CheckBoxText>
+          </CheckBox>
         </AirportCheckBoxList>
       </AirportBox>
       <EcoFilterBox>
@@ -511,7 +301,7 @@ function FilterTap(props) {
         </FilterNameTap>
         <EcoCheckBoxList id="5" isOpened={opendArr}>
           <CheckBox>
-            <input type="checkbox" onChange={showEco} checked={props.eco} />
+            <input type="checkbox" />
             <CheckBoxText>
               <div>이산화탄소 배출량이 낮은 항공편만 보기</div>
             </CheckBoxText>
@@ -575,12 +365,7 @@ const FilterNameTap = styled.div`
 
 const DepartureFilterBox = styled.div`
   width: 100%;
-  height: ${props =>
-    props.isOpened.includes(props.id)
-      ? props.howMany.radio === '왕복'
-        ? '207px'
-        : '103.5px'
-      : 0};
+  height: ${props => (props.isOpened.includes(props.id) ? '207px' : 0)};
   overflow: ${props =>
     props.isOpened.includes(props.id) ? 'visible' : 'hidden'};
   transition: height 0.3s ease-in-out;
@@ -676,7 +461,7 @@ const DurationFilterBox = styled.div`
   overflow: ${props =>
     props.isOpened.includes(props.id) ? 'visible' : 'hidden'};
   height: ${props => (props.isOpened.includes(props.id) ? '97px' : 0)};
-  transition: all 0.3s ease-in-out;
+  transition: height 0.3s ease-in-out;
 `;
 
 const DragButton3 = styled.div`
@@ -762,8 +547,8 @@ const AirlineBox = styled.div`
 
 const AirlineCheckBoxList = styled.div`
   overflow: hidden;
-  height: ${props => (props.isOpened.includes(props.id) ? `180px` : 0)};
-  transition: all 0.3s ease-in-out;
+  height: ${props => (props.isOpened.includes(props.id) ? '110px' : 0)};
+  transition: height 0.3s ease-in-out;
 `;
 
 const CheckAllBox = styled.div`
@@ -784,17 +569,14 @@ const CheckAllBoxText = styled.div`
 
 const AirportCheckBoxList = styled.div`
   overflow: hidden;
-  height: ${props =>
-    props.isOpened.includes(props.id)
-      ? `${props.airportLength * 60 + 100}px`
-      : 0};
-  transition: all 0.3s ease-in-out;
+  height: ${props => (props.isOpened.includes(props.id) ? '60px' : 0)};
+  transition: height 0.3s ease-in-out;
 `;
 
 const EcoCheckBoxList = styled.div`
   overflow: hidden;
   height: ${props => (props.isOpened.includes(props.id) ? '60px' : 0)};
-  transition: all 0.3s ease-in-out;
+  transition: height 0.3s ease-in-out;
 `;
 
 const CheckBox = styled.div`
@@ -831,12 +613,4 @@ const AirportBox = styled.div`
 
 const EcoFilterBox = styled.div`
   width: 100%;
-`;
-
-const AirportDeparture = styled.div``;
-const AirportArrival = styled.div``;
-const WhichWay = styled.div`
-  display: flex;
-  align-items: center;
-  height: 50px;
 `;

@@ -1,27 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
-import 'moment/locale/ko';
 
-function DateTap({ basicInfo }) {
-  const engAirport = basicInfo => {
-    if (basicInfo === '김해') return 'PUS';
-    if (basicInfo === '제주') return 'CJU';
-    if (basicInfo === '김포') return 'GMP';
-  };
-
-  const day = time => {
-    let result = moment(time).format('dddd');
-    result = result.slice(0, 1);
-    return result;
-  };
-
-  const monthDate = time => {
-    let result = moment(time).format('MMM Do YY');
-    result = result.slice(0, result.indexOf('일') + 1);
-    return result;
-  };
-
+function DateTap() {
   return (
     <OuterBox>
       <SearchingBox>
@@ -29,33 +9,23 @@ function DateTap({ basicInfo }) {
           <img src="/images/search.png" alt="search" />
         </SearchImgBox>
         <SearchDescBox>
-          <Direction>
-            {basicInfo.start} ({engAirport(basicInfo.start)}) - {basicInfo.end}{' '}
-            ({engAirport(basicInfo.end)})
-          </Direction>
+          <Direction>서울 (ICN) - 오사카 (모두)</Direction>
           <SeatInfo>
-            <span>성인 </span>
-            {basicInfo.seat}
+            <span>성인 </span>일반석
           </SeatInfo>
         </SearchDescBox>
       </SearchingBox>
       <DateFilterBox>
         <Departure>
           <img src="/images/leftArrow.png" alt="arrow" />
-          <span>
-            {monthDate(basicInfo.startDate)} ({day(basicInfo.startDate)})
-          </span>
+          <span>10월 9일 (일)</span>
           <img src="/images/rightArrow.png" alt="arrow" />
         </Departure>
-        {basicInfo.radio === '왕복' ? (
-          <Arrival>
-            <img src="/images/leftArrow.png" alt="arrow" />
-            <span>
-              {monthDate(basicInfo.endDate)} ({day(basicInfo.endDate)})
-            </span>
-            <img src="/images/rightArrow.png" alt="arrow" />
-          </Arrival>
-        ) : null}
+        <Arrival>
+          <img src="/images/leftArrow.png" alt="arrow" />
+          <span>10월 9일 (일)</span>
+          <img src="/images/rightArrow.png" alt="arrow" />
+        </Arrival>
       </DateFilterBox>
     </OuterBox>
   );

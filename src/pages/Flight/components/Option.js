@@ -60,12 +60,14 @@ function Option(props) {
     }
     return english;
   })();
-  console.log(props.id);
 
   const goHotel = () => {
     navigate('/hotel', {
       state: {
         flightId: props.id,
+        arrival: props.product.arrival1,
+        product: props.product,
+        location: props.location,
       },
     });
   };

@@ -1,79 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
-import { Navigate, useNavigate } from 'react-router-dom';
 
-function OptionEco(props) {
-  const navigate = useNavigate();
-  const departTime1 = (function () {
-    let english = moment(`2022-10-07 ${props.product.departureTime1}`).format(
-      'LT'
-    );
-    if (english.includes('AM')) {
-      english = english.slice(0, 5);
-      english = `오전 ${english}`;
-    } else if (english.includes('PM')) {
-      english = english.slice(0, 5);
-      english = `오후 ${english}`;
-    }
-    return english;
-  })();
-
-  const departTime2 = (function () {
-    let english = moment(`2022-10-07 ${props.product.departureTime2}`).format(
-      'LT'
-    );
-    if (english.includes('AM')) {
-      english = english.slice(0, 5);
-      english = `오전 ${english}`;
-    } else if (english.includes('PM')) {
-      english = english.slice(0, 5);
-      english = `오후 ${english}`;
-    }
-    return english;
-  })();
-
-  const arrivalTime1 = (function () {
-    let english = moment(`2022-10-07 ${props.product.arrivalTime1}`).format(
-      'LT'
-    );
-    if (english.includes('AM')) {
-      english = english.slice(0, 5);
-      english = `오전 ${english}`;
-    } else if (english.includes('PM')) {
-      english = english.slice(0, 5);
-      english = `오후 ${english}`;
-    }
-    return english;
-  })();
-
-  const arrivalTime2 = (function () {
-    let english = moment(`2022-10-07 ${props.product.arrivalTime2}`).format(
-      'LT'
-    );
-    if (english.includes('AM')) {
-      english = english.slice(0, 5);
-      english = `오전 ${english}`;
-    } else if (english.includes('PM')) {
-      english = english.slice(0, 5);
-      english = `오후 ${english}`;
-    }
-    return english;
-  })();
-
-  const goHotel = () => {
-    navigate('/hotel', {
-      state: {
-        flightId: props.id,
-        arrival: props.product.arrival1,
-        product: props.product,
-        location: props.location,
-      },
-    });
-  };
-
+function OptionEco() {
   return (
-    <OuterBoxEco isRound={props.location.radio}>
+    <OuterBoxEco>
       <EcoBox>
         <EcoImgBox>
           <img src="/images/eco.png" alt="eco" />
@@ -87,23 +17,19 @@ function OptionEco(props) {
         </EcoDescBox>
       </EcoBox>
 
-      <InnerBox onClick={goHotel}>
+      <InnerBox>
         <LeftBox>
           <LeftInner>
             <AirPicBox>
-              <img src={props.product.airlineImage1} alt="airPic" />
+              <img src="/images/jinairSample.jpeg" alt="airPic" />
             </AirPicBox>
             <DescBox>
               <Departure>
-                <Time>{departTime1}</Time>
-                <Airport>
-                  {props.product.departure1 === '김해' ? 'PUS' : null}
-                  {props.product.departure1 === '김포' ? 'KMP' : null}
-                  {props.product.departure1 === '제주' ? 'CJU' : null}
-                </Airport>
+                <Time>오전 9:15</Time>
+                <Airport>ICN</Airport>
               </Departure>
               <Duration>
-                <DurationTime>{props.product.duration1}분</DurationTime>
+                <DurationTime>1시간 45분</DurationTime>
                 <Line>
                   <div />
                   <img src="/images/airplane.png" alt="airplane" />
@@ -111,54 +37,38 @@ function OptionEco(props) {
                 <IsDirect>직항</IsDirect>
               </Duration>
               <Arrival>
-                <Time>{arrivalTime1}</Time>
-                <Airport>
-                  {props.product.arrival1 === '김해' ? 'PUS' : null}
-                  {props.product.arrival1 === '김포' ? 'KMP' : null}
-                  {props.product.arrival1 === '제주' ? 'CJU' : null}
-                </Airport>
+                <Time>오전 9:15</Time>
+                <Airport>ICN</Airport>
               </Arrival>
             </DescBox>
           </LeftInner>
-          {props.location.radio === '왕복' ? (
-            <LeftInner>
-              <AirPicBox>
-                <img src={props.product.airlineImage2} alt="airPic" />
-              </AirPicBox>
-              <DescBox>
-                <Departure>
-                  <Time>{departTime2}</Time>
-                  <Airport>
-                    {props.product.departure2 === '김해' ? 'PUS' : null}
-                    {props.product.departure2 === '김포' ? 'KMP' : null}
-                    {props.product.departure2 === '제주' ? 'CJU' : null}
-                  </Airport>
-                </Departure>
-                <Duration>
-                  <DurationTime>{props.product.duration2}분</DurationTime>
-                  <Line>
-                    <div />
-                    <img src="/images/airplane.png" alt="airplane" />
-                  </Line>
-                  <IsDirect>직항</IsDirect>
-                </Duration>
-                <Arrival>
-                  <Time>{arrivalTime2}</Time>
-                  <Airport>
-                    {props.product.arrival2 === '김해' ? 'PUS' : null}
-                    {props.product.arrival2 === '김포' ? 'KMP' : null}
-                    {props.product.arrival2 === '제주' ? 'CJU' : null}
-                  </Airport>
-                </Arrival>
-              </DescBox>
-            </LeftInner>
-          ) : null}
+          <LeftInner>
+            <AirPicBox>
+              <img src="/images/jinairSample.jpeg" alt="airPic" />
+            </AirPicBox>
+            <DescBox>
+              <Departure>
+                <Time>오전 9:15</Time>
+                <Airport>ICN</Airport>
+              </Departure>
+              <Duration>
+                <DurationTime>1시간 45분</DurationTime>
+                <Line>
+                  <div />
+                  <img src="/images/airplane.png" alt="airplane" />
+                </Line>
+                <IsDirect>직항</IsDirect>
+              </Duration>
+              <Arrival>
+                <Time>오전 9:15</Time>
+                <Airport>ICN</Airport>
+              </Arrival>
+            </DescBox>
+          </LeftInner>
         </LeftBox>
         <RightBox>
           <TextBox>총 23건 중 최저가</TextBox>
-          <PriceInOption>
-            ₩{Number(props.product.totalPrice)?.toLocaleString()}
-          </PriceInOption>
+          <PriceInOption>₩561,400</PriceInOption>
           <Choose>선택 →</Choose>
         </RightBox>
       </InnerBox>
@@ -170,7 +80,7 @@ export default OptionEco;
 
 const OuterBoxEco = styled.div`
   width: 100%;
-  height: ${props => (props.isRound === '왕복' ? '240px' : '163px')};
+  height: 240px;
   display: flex;
   flex-direction: column;
   border-radius: 4px;

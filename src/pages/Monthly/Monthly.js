@@ -27,13 +27,13 @@ const Monthly = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://10.58.52.226:3000/price')
+    fetch('http://43.200.182.156:3000/price')
       .then(res => res.json())
       .then(res => setData(res.result));
   }, []);
 
   useEffect(() => {
-    fetch('http://10.58.52.226:3000/price/second')
+    fetch('http://43.200.182.156:3000/price/second')
       .then(res => res.json())
       .then(res => setData2(res.result));
   }, []);

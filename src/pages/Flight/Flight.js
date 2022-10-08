@@ -11,7 +11,6 @@ const Flight = () => {
   const location = useLocation().state;
   const [sorter, setSorter] = useState('minPrice');
   const [eco, setEco] = useState(false);
-  console.log(location);
   const roundTrip = (location => {
     if (location.radio === '왕복') return 'T';
     if (location.radio === '편도') return 'F';
@@ -48,7 +47,7 @@ const Flight = () => {
 
   useEffect(() => {
     fetch(
-      `http://10.58.52.62:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=${sorter}&departureTime=00000000&arrivalTime=00000000&eco=${eco}`,
+      `http://43.200.182.156:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=${sorter}&departureTime=00000000&arrivalTime=00000000&eco=${eco}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
