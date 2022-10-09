@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
+/* eslint-disable no-undef */
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
-import { ko } from 'date-fns/esm/locale';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/esm/locale';
+import DropBox from './DropBox';
+import DailyPay from './DailyPay';
 
 const LABEL_BORDER_GRAY = '0.1875rem solid #8f90a0';
 const LABEL_BORDER_RED = '0.1875rem solid #0076f7';
 const LABEL_BORDER_BLUE = '0.1875rem solid #005cc0';
-const BLOCK = 'block';
-const NONE = 'none';
-const BORDER_BOTTOM = '3px solid #0770e3';
-const BORDER_BOTTOM2 = '3px solid white';
-const FONT_COLOR = '#0770e3';
-const FONT_COLOR2 = 'black';
 
 const Monthly = () => {
   const [isValid, setIsValid] = useState(true);
+  const [calendarClick, setCalendarClick] = useState(true);
+  const [calendarData, setCalendarData] = useState(true);
+  const [calendarDataBack, setCalendarDataBack] = useState(true);
   const [dropDown, setDropDown] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const [value1, setValue1] = useState('');
-  const [value2, setValue2] = useState('');
-  const [calendarClick, setCalendarClick] = useState(true);
+  const [endDate, setEndDate] = useState(new Date());
+  const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [price, setPrice] = useState(0);
+  const [priceBack, setPriceBack] = useState(0);
+
+  useEffect(() => {
+    fetch('/data/Mock/Mock.json')
+      .then(res => res.json())
+      .then(res => setData(res));
+  }, []);
+
+  useEffect(() => {
+    fetch('/data/Mock/Mock2.json')
+      .then(res => res.json())
+      .then(res => setData2(res));
+  }, []);
   const focusChange = e => {
     const Cn = e.target.name;
     if (Cn === 'day') {
@@ -29,18 +43,6 @@ const Monthly = () => {
       setCalendarClick(false);
     }
   };
-  const value1Value = e => {
-    setValue1(e.target.value);
-  };
-  const value2Value = e => {
-    setValue2(e.target.value);
-  };
-  const textChange = () => {
-    let text1 = value1;
-    let text2 = value2;
-    setValue1(text2);
-    setValue2(text1);
-  };
 
   const DropDownBox = () => {
     setDropDown(!dropDown);
@@ -48,6 +50,46 @@ const Monthly = () => {
   const labelColor = () => {
     setIsValid(!isValid);
   };
+
+  const pricePull = e => {
+    let dataType = calendarData ? data : data2;
+    let days = e.target.innerText;
+    for (let i in dataType) {
+      for (let j in dataType[i]) {
+        if (dataType[i][j].day === Number(days)) {
+          setPrice(dataType[i][j].price);
+        }
+      }
+    }
+    if (days === 'Previous Month') {
+      setCalendarData(true);
+    } else if (days === 'Next Month') {
+      setCalendarData(false);
+    }
+  };
+  const pricePullBack = e => {
+    let dataType = calendarDataBack ? data : data2;
+    let days = e.target.innerText;
+    for (let i in dataType) {
+      for (let j in dataType[i]) {
+        if (dataType[i][j].day === Number(days)) {
+          setPriceBack(dataType[i][j].price);
+        }
+      }
+    }
+    if (days === 'Previous Month') {
+      setCalendarDataBack(true);
+    } else if (days === 'Next Month') {
+      setCalendarDataBack(false);
+    }
+  };
+
+  const priceResult = [price, priceBack].reduce((a, c) => {
+    return a + c;
+  });
+  const priceResultDot = priceResult
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   return (
     <MonthlyCss onClick={focusChange}>
@@ -63,213 +105,7 @@ const Monthly = () => {
             </MagnifierBottom>
           </MagnifierRight>
         </MagnifierContainer>
-        <DropBox display={dropDown ? BLOCK : NONE}>
-          <Check type="radio" name="checkButton" />
-          왕복
-          <Check type="radio" name="checkButton" />
-          편도
-          <Check type="radio" name="checkButton" />
-          다구간
-          <GuestTicket>
-            <Point>
-              <StartPoint>
-                출발지
-                <StartSet>
-                  <StartInput
-                    value={value1}
-                    onChange={value1Value}
-                    placeholder="국가,도시 또는 공항"
-                  />
-                  <StartButton onClick={textChange}>
-                    <i className="fa-solid fa-right-left" />
-                  </StartButton>
-                </StartSet>
-                <CreatCheck>
-                  <AirPort type="checkbox" />
-                  주변공항
-                </CreatCheck>
-                <DayCheck>
-                  <StartDay>
-                    가는날
-                    <CalendarCustom2>
-                      {calendarClick ? (
-                        <DatePicker
-                          selected={startDate}
-                          onChange={setStartDate}
-                          dateFormat="yyyy/MM/dd"
-                          showMonthDropdown
-                          locale={ko}
-                        >
-                          <DayToMonth>
-                            <Day
-                              name="day"
-                              border={
-                                calendarClick ? BORDER_BOTTOM : BORDER_BOTTOM2
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR : FONT_COLOR2
-                              }
-                            >
-                              특정날짜
-                            </Day>
-                            <Month
-                              name="month"
-                              border={
-                                calendarClick ? BORDER_BOTTOM2 : BORDER_BOTTOM
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR2 : FONT_COLOR
-                              }
-                            >
-                              한달전체
-                            </Month>
-                          </DayToMonth>
-                        </DatePicker>
-                      ) : (
-                        <DatePicker
-                          selected={startDate}
-                          onChange={date => setStartDate(date)}
-                          dateFormat="yyyy/MM/dd"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          showTwoColumnMonthYearPicker
-                          locale={ko}
-                        >
-                          <DayToMonth>
-                            <CheapDay>가장 저렴한 달</CheapDay>
-                            <Day
-                              name="day"
-                              border={
-                                calendarClick ? BORDER_BOTTOM : BORDER_BOTTOM2
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR : FONT_COLOR2
-                              }
-                            >
-                              특정날짜
-                            </Day>
-                            <Month
-                              name="month"
-                              border={
-                                calendarClick ? BORDER_BOTTOM2 : BORDER_BOTTOM
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR2 : FONT_COLOR
-                              }
-                            >
-                              한달전체
-                            </Month>
-                          </DayToMonth>
-                        </DatePicker>
-                      )}
-                    </CalendarCustom2>
-                  </StartDay>
-                  <StartDay>
-                    오는날
-                    <CalendarCustom2>
-                      {calendarClick ? (
-                        <DatePicker
-                          selected={startDate}
-                          onChange={setStartDate}
-                          dateFormat="yyyy/MM/dd"
-                          showMonthDropdown
-                          locale={ko}
-                        >
-                          <DayToMonth>
-                            <Day
-                              name="day"
-                              border={
-                                calendarClick ? BORDER_BOTTOM : BORDER_BOTTOM2
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR : FONT_COLOR2
-                              }
-                            >
-                              특정날짜
-                            </Day>
-                            <Month
-                              name="month"
-                              border={
-                                calendarClick ? BORDER_BOTTOM2 : BORDER_BOTTOM
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR2 : FONT_COLOR
-                              }
-                            >
-                              한달전체
-                            </Month>
-                          </DayToMonth>
-                        </DatePicker>
-                      ) : (
-                        <DatePicker
-                          selected={startDate}
-                          onChange={date => setStartDate(date)}
-                          dateFormat="yyyy/MM/dd"
-                          showMonthYearPicker
-                          showFullMonthYearPicker
-                          showTwoColumnMonthYearPicker
-                          locale={ko}
-                        >
-                          <DayToMonth>
-                            <CheapDay>가장 저렴한 달</CheapDay>
-                            <Day
-                              name="day"
-                              border={
-                                calendarClick ? BORDER_BOTTOM : BORDER_BOTTOM2
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR : FONT_COLOR2
-                              }
-                            >
-                              특정날짜
-                            </Day>
-                            <Month
-                              name="month"
-                              border={
-                                calendarClick ? BORDER_BOTTOM2 : BORDER_BOTTOM
-                              }
-                              FONT_COLOR={
-                                calendarClick ? FONT_COLOR2 : FONT_COLOR
-                              }
-                            >
-                              한달전체
-                            </Month>
-                          </DayToMonth>
-                        </DatePicker>
-                      )}
-                    </CalendarCustom2>
-                  </StartDay>
-                </DayCheck>
-              </StartPoint>
-              <EndPoint>
-                도착지
-                <EndInput
-                  value={value2}
-                  onChange={value2Value}
-                  placeholder="국가,도시 또는 공항"
-                />
-                <CreatCheck>
-                  <AirPort type="checkbox" />
-                  주변공항
-                </CreatCheck>
-                <Guest>
-                  좌석및승객
-                  <Guests />
-                </Guest>
-              </EndPoint>
-            </Point>
-            <StraightCheck>
-              <StraightChecked>
-                <StraightCheckBox type="checkbox" />
-                직항만
-              </StraightChecked>
-              <FlightBtn>
-                항공권 검색
-                <i className="fa-solid fa-arrow-right" />
-              </FlightBtn>
-            </StraightCheck>
-          </GuestTicket>
-        </DropBox>
+        <DropBox dropDown={dropDown} calendarClick={calendarClick} />
         <MonthlyPay>
           <MonthlyPayText>월별요금</MonthlyPayText>
           <MonthlyPayRow>
@@ -306,15 +142,24 @@ const Monthly = () => {
               </GoTextInput>
               <MainCalendar>
                 <GoMainCalendar>
-                  <CalendarCustom>
+                  <CalendarCustom onClick={pricePull}>
                     <CalendarPick
                       selected={startDate}
                       onChange={date => setStartDate(date)}
                       showMonthDropdown
                       useShortMonthInDropdown
                       inline
+                      showDisabledMonthNavigation
+                      minDate={new Date()}
+                      maxDate={new Date('2022-11-20')}
+                      // excludeDates={addDays(new date(),1)}}
                       locale={ko}
-                    />
+                    >
+                      <DailyPay
+                        startDate={startDate}
+                        data={calendarData ? data : data2}
+                      />
+                    </CalendarPick>
                   </CalendarCustom>
                 </GoMainCalendar>
               </MainCalendar>
@@ -325,15 +170,22 @@ const Monthly = () => {
               </GoTextInput>
               <MainCalendar>
                 <GoalMainCalendar>
-                  <CalendarCustom>
+                  <CalendarCustom onClick={pricePullBack}>
                     <CalendarPick
-                      selected={startDate}
-                      onChange={date => setStartDate(date)}
+                      selected={endDate}
+                      onChange={date => setEndDate(date)}
                       showMonthDropdown
                       useShortMonthInDropdown
                       inline
+                      minDate={new Date()}
+                      maxDate={new Date('2022-11-20')}
                       locale={ko}
-                    />
+                    >
+                      <DailyPay
+                        startDate={startDate}
+                        data={calendarDataBack ? data : data2}
+                      />
+                    </CalendarPick>
                   </CalendarCustom>
                 </GoalMainCalendar>
               </MainCalendar>
@@ -343,7 +195,7 @@ const Monthly = () => {
             <NewYorkText>뉴욕</NewYorkText>
             <DayPay>
               11월 12일 (토)-12월 1일 (목). 총 여행 요금
-              <Price> ₩500.000 </Price>
+              <Price> ₩500,000 </Price>
               부터
             </DayPay>
           </NewYork>
@@ -360,7 +212,9 @@ const Monthly = () => {
             <AirlineTicketPrice>
               <PriceCriteria>
                 <PriceCriteriaText>성인1인 기준</PriceCriteriaText>
-                <PriceCriteriaPrice>₩20,000</PriceCriteriaPrice>
+                <PriceCriteriaPrice>
+                  {price ? `₩` + priceResultDot : ``}
+                </PriceCriteriaPrice>
               </PriceCriteria>
               <AirlineTicketFind>항공편 찾기</AirlineTicketFind>
             </AirlineTicketPrice>
@@ -398,7 +252,14 @@ const Monthly = () => {
           src={`${process.env.PUBLIC_URL}/images/1624940829950_0.jpeg`}
           alt="add"
         />
-        <Hush src={`${process.env.PUBLIC_URL}/images/IMG_1167.jpg`} alt="add" />
+        <Hush
+          src={`${process.env.PUBLIC_URL}/images/images (1).jpeg`}
+          alt="add"
+        />
+        <Hush
+          src={`${process.env.PUBLIC_URL}/images/LOGO_ZINWOOS.png`}
+          alt="add"
+        />
         <Hush src={`${process.env.PUBLIC_URL}/images/images.jpeg`} alt="add" />
         <Hush src={`${process.env.PUBLIC_URL}/images/IMG_1168.jpg`} alt="add" />
         <HushText>달달한 디저트가 땡길땐?Hush</HushText>
@@ -409,6 +270,21 @@ const Monthly = () => {
 
 export default Monthly;
 
+const MonthlyPay = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+`;
+
+const MonthlyPayText = styled.div`
+  font-size: 23px;
+`;
+
+const MonthlyPayRow = styled.div`
+  display: flex;
+  align-items: flex-end;
+  font-size: 10px;
+`;
 const MonthlyCss = styled.div`
   display: flex;
   justify-content: center;
@@ -472,19 +348,6 @@ const NikeText2 = styled.div`
   top: 20px;
 `;
 
-const MonthlyPay = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-`;
-const MonthlyPayText = styled.div`
-  font-size: 23px;
-`;
-const MonthlyPayRow = styled.div`
-  display: flex;
-  align-items: flex-end;
-  font-size: 10px;
-`;
 const Straight = styled.div`
   display: flex;
   justify-content: space-between;
@@ -523,11 +386,12 @@ const Main = styled.div`
 const CalendarCustom = styled.div`
   .react-datepicker__day-name {
     width: 40px;
-    height: 70px;
+    height: 60px;
   }
   .react-datepicker__day {
     width: 40px;
     height: 40px;
+    margin-bottom: 30px;
   }
   .react-datepicker__header {
     background-color: white;
@@ -538,54 +402,7 @@ const CalendarCustom = styled.div`
     border: none;
   }
 `;
-const CalendarCustom2 = styled.div`
-  position: relative;
-  z-index: 2;
-  input {
-    height: 40px;
-    border-radius: 5px;
-  }
-  .react-datepicker__month-container {
-    border: 1px solid gainsboro;
-    border-radius: 5px;
-  }
 
-  .react-datepicker__day-name {
-    width: 40px;
-    height: 40px;
-  }
-  .react-datepicker__day {
-    width: 40px;
-    height: 40px;
-  }
-  .react-datepicker__header {
-    background-color: white;
-    border: none;
-  }
-  .react-datepicker {
-    margin-left: 10px;
-    border: none;
-  }
-  .react-datepicker__navigation {
-    margin-top: 60px;
-  }
-  .react-datepicker__navigation {
-    margin-top: 60px;
-  }
-  .react-datepicker__header {
-    margin-top: 60px;
-  }
-  .react-datepicker__header {
-    width: 331px;
-  }
-  .react-datepicker__month-text {
-    height: 50px;
-    margin: 2px 20px;
-  }
-  .react-datepicker__header {
-    margin-bottom: 60px;
-  }
-`;
 const CalendarText = styled.button`
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -624,16 +441,7 @@ const GoText = styled.div`
   left: 90px;
   top: 10px;
 `;
-const EndPoint = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-`;
 
-const Guest = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 const Goal = styled.div`
   display: flex;
   flex-direction: column;
@@ -643,173 +451,52 @@ const GoTextInput = styled.div`
   display: flex;
   position: relative;
 `;
-const DropBox = styled.div`
-  display: ${props => props.display};
-  background-color: #042759;
-  color: white;
-  padding: 10px;
-  margin-top: -10px;
-`;
-const Check = styled.input``;
 
-const Day = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30%;
-  height: 99%;
-  padding: 0px;
-  margin: 0px;
-  background-color: white;
-  border: none;
-  border-bottom: ${props => props.border};
-  color: ${props => props.FONT_COLOR};
-  &:hover {
-    border-bottom: 3px solid gainsboro;
-  }
-`;
-const Month = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30%;
-  background-color: white;
-  border: none;
-  border-bottom: ${props => props.border};
-  color: ${props => props.FONT_COLOR};
-  &:hover {
-    border-bottom: 3px solid gainsboro;
-`;
-const DayToMonth = styled.div`
-  display: flex;
-  justify-content: space-around;
-  position: absolute;
-  width: 100%;
-  height: 50px;
-  top: 5px;
-  z-index: 2;
-  border-bottom: 1px solid gainsboro;
-`;
 const Nike = styled.div`
   display: flex;
   padding: 10px 0px;
 `;
 const HushText = styled.div`
   position: absolute;
-  top: 250px;
+  top: 280px;
   color: brown;
-`;
-const StartPoint = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-`;
-const CreatCheck = styled.div``;
-
-const StartDay = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 45%;
-  margin-right: 5px;
-`;
-const AirPort = styled.input`
-  margin: 10px 0px;
-`;
-const Guests = styled.input`
-  height: 40px;
-  border-radius: 5px;
-`;
-const StraightCheckBox = styled.input`
-  margin: 10px 0px;
 `;
 
 const MainCalendar = styled.div``;
-const StraightChecked = styled.div``;
-const CheapDay = styled.button`
-  position: absolute;
-  top: 90px;
-  width: 300px;
-  height: 40px;
-  background-color: white;
-  border: 3px solid gainsboro;
-  border-radius: 5px;
-  color: #0770e3;
-  font-weight: 700;
-  font-size: 20px;
-`;
-const DayCheck = styled.div`
-  display: flex;
-`;
+
 const GoMainCalendar = styled.div``;
 const GoalMainCalendar = styled.div``;
 const Host = styled.span`
   color: #0770e3;
 `;
-const StraightCheck = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+
 const GoalText = styled.div`
   position: absolute;
   z-index: 1;
   left: 90px;
   top: 10px;
 `;
-const StartSet = styled.div`
-  position: relative;
-`;
 
-const StartButton = styled.button`
-  position: absolute;
-  width: 10%;
-  height: 40px;
-  background-color: white;
-  border: none;
-`;
-const FlightBtn = styled.button`
-  background-color: #00a799;
-  border: none;
-  border-radius: 7px;
-  padding: 10px 30px;
-  margin: 5px 0px;
-  color: white;
-  font-size: 16px;
-  font-weight: 900;
-`;
-const StartInput = styled.input`
-  height: 40px;
-  width: 90%;
-  font-size: 14px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border: none;
-`;
-const EndInput = styled.input`
-  height: 40px;
-  border-top-right-radius: 5px;
-  font-size: 14px;
-  border-bottom-right-radius: 5px;
-  border: none;
-  border-left: 1px solid gainsboro;
-`;
 const Promotion = styled.img`
   width: 500px;
   height: 100px;
 `;
 const Melon = styled.img`
   width: 140px;
+  padding: 10px 0px;
+  border-radius: 5px;
 `;
 const Hush = styled.img`
   width: 300px;
+  padding: 10px 0px;
+  border-radius: 15px;
 `;
-const Point = styled.div`
-  display: flex;
-`;
-const GuestTicket = styled.div``;
 
 const Price = styled.span`
   font-weight: 900;
+  color: #0770e3;
 `;
+
 const NewYork = styled.div`
   border-top: 1px solid gainsboro;
   padding: 15px 0px;
