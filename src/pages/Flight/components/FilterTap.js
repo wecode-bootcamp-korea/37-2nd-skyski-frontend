@@ -65,7 +65,7 @@ function FilterTap(props) {
 
   useEffect(() => {
     fetch(
-      `http://10.58.52.147:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
+      `http://10.58.52.62:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
@@ -82,7 +82,7 @@ function FilterTap(props) {
     window.removeEventListener('mouseup', outThisButton);
 
     fetch(
-      `http://10.58.52.147:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
+      `http://10.58.52.62:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=minPrice&departureTime=${firstBtnHourFetch}${secondBtnHourFetch}&arrivalTime=${thirdBtnHourFetch}${fourthBtnHourFetch}${exceptAirlineFetch}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',

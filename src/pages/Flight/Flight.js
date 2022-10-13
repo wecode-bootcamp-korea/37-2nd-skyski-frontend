@@ -48,7 +48,7 @@ const Flight = () => {
 
   useEffect(() => {
     fetch(
-      `http://10.58.52.147:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=${sorter}&departureTime=00000000&arrivalTime=00000000&eco=${eco}`,
+      `http://10.58.52.62:3000/flight?roundTrip=${roundTrip}&departure=${departure}${arrival}&departureDate=${departDate}${endDate}&flightSeatClass=${seatClass}&sort=${sorter}&departureTime=00000000&arrivalTime=00000000&eco=${eco}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
