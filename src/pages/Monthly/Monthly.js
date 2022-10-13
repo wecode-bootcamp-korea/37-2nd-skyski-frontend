@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/esm/locale';
 import DropBox from './DropBox';
 import DailyPay from './DailyPay';
+import { useNavigate } from 'react-router-dom';
 
 const LABEL_BORDER_GRAY = '0.1875rem solid #8f90a0';
 const LABEL_BORDER_RED = '0.1875rem solid #0076f7';
@@ -23,18 +24,20 @@ const Monthly = () => {
   const [data2, setData2] = useState([]);
   const [price, setPrice] = useState(0);
   const [priceBack, setPriceBack] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/data/Mock/Mock.json')
+    fetch('http://10.58.52.226:3000/price')
       .then(res => res.json())
-      .then(res => setData(res));
+      .then(res => setData(res.result));
   }, []);
 
   useEffect(() => {
-    fetch('/data/Mock/Mock2.json')
+    fetch('http://10.58.52.226:3000/price/second')
       .then(res => res.json())
-      .then(res => setData2(res));
+      .then(res => setData2(res.result));
   }, []);
+
   const focusChange = e => {
     const Cn = e.target.name;
     if (Cn === 'day') {
@@ -47,6 +50,7 @@ const Monthly = () => {
   const DropDownBox = () => {
     setDropDown(!dropDown);
   };
+
   const labelColor = () => {
     setIsValid(!isValid);
   };
@@ -56,7 +60,7 @@ const Monthly = () => {
     let days = e.target.innerText;
     for (let i in dataType) {
       for (let j in dataType[i]) {
-        if (dataType[i][j].day === Number(days)) {
+        if (dataType[i][j].Ddate === Number(days)) {
           setPrice(dataType[i][j].price);
         }
       }
@@ -72,7 +76,7 @@ const Monthly = () => {
     let days = e.target.innerText;
     for (let i in dataType) {
       for (let j in dataType[i]) {
-        if (dataType[i][j].day === Number(days)) {
+        if (dataType[i][j].Ddate === Number(days)) {
           setPriceBack(dataType[i][j].price);
         }
       }
@@ -83,7 +87,6 @@ const Monthly = () => {
       setCalendarDataBack(false);
     }
   };
-
   const priceResult = [price, priceBack].reduce((a, c) => {
     return a + c;
   });
@@ -91,6 +94,15 @@ const Monthly = () => {
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
+  const move = () => {
+    navigate('/filter', {
+      state: {
+        startDate: startDate,
+        endDate: endDate,
+        totalPrice: priceResultDot,
+      },
+    });
+  };
   return (
     <MonthlyCss onClick={focusChange}>
       <LeftBar>
@@ -152,7 +164,6 @@ const Monthly = () => {
                       showDisabledMonthNavigation
                       minDate={new Date()}
                       maxDate={new Date('2022-11-20')}
-                      // excludeDates={addDays(new date(),1)}}
                       locale={ko}
                     >
                       <DailyPay
@@ -216,7 +227,7 @@ const Monthly = () => {
                   {price ? `₩` + priceResultDot : ``}
                 </PriceCriteriaPrice>
               </PriceCriteria>
-              <AirlineTicketFind>항공편 찾기</AirlineTicketFind>
+              <AirlineTicketFind onClick={move}>항공편 찾기</AirlineTicketFind>
             </AirlineTicketPrice>
           </AirlineTicketComponent>
         </Main>
